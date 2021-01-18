@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westus2"
+        },
+        "arrayName": {
+            "value": "cbspvdtest"
+        },
+        "sku": {
+            "value": "V20MUR2"
+        },
+        "orgDomain": {
+            "value": "puresrorage.com"
+        },
+        "licenseKey": {
+            "value": "0f43a835-fa41696f-f49f876e-0557cdc3-c35d64c5"
+        },
+        "alertRecipients": {
+            "value": ""
+        },
+        "pureuserPublicKey": {
+            "value": ""
+        },
+        "zone": {
+            "value": 3
+        },
+        "managementSubnet": {
+            "value": "fa-soln-db-sql-subnet"
+        },
+        "systemSubnet": {
+            "value": "fa-soln-db-sql-subnet"
+        },
+        "iSCSISubnet": {
+            "value": "fa-soln-db-sql-subnet"
+        },
+        "replicationSubnet": {
+            "value": "fa-soln-db-sql-subnet"
+        },
+        "managementVnet": {
+            "value": "fa-soln-db-vnet"
+        },
+        "systemVnet": {
+            "value": "fa-soln-db-vnet"
+        },
+        "iSCSIVnet": {
+            "value": "fa-soln-db-vnet"
+        },
+        "replicationVnet": {
+            "value": "fa-soln-db-vnet"
+        },
+        "managementResourceGroup": {
+            "value": "FA-SOLN-DB"
+        },
+        "systemResourceGroup": {
+            "value": "FA-SOLN-DB"
+        },
+        "iSCSIResourceGroup": {
+            "value": "FA-SOLN-DB"
+        },
+        "replicationResourceGroup": {
+            "value": "FA-SOLN-DB"
+        },
+        "jitAccessPolicy": {
+            "value": {
+                "jitAccessEnabled": true,
+                "jitApprovalMode": "AutoApprove",
+                "maximumJitAccessDuration": "PT8H",
+                "jitApprovers": []
+            }
+        },
+        "tagsByResource": {
+            "value": {
+                "Team": "Microsoft",
+                "CreatedBy": "fa-soln-db"
+            }
+        },
+        "applicationResourceName": {
+            "value": "fasolndbpvsapp"
+        },
+        "managedResourceGroupId": {
+            "value": "fa-soln-db-pvdcbs-mrg"
+        }
+    }
+}
