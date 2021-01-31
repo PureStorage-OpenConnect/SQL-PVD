@@ -6,7 +6,7 @@
             "value": "westus2"
         },
         "arrayName": {
-            "value": "cbspvdtest"
+            "value": "cbsarray"
         },
         "sku": {
             "value": "V20MUR2"
@@ -15,7 +15,7 @@
             "value": "puresrorage.com"
         },
         "licenseKey": {
-            "value": "0f43a835-fa41696f-f49f876e-0557cdc3-c35d64c5"
+            "value": "xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx"
         },
         "alertRecipients": {
             "value": ""
@@ -27,40 +27,40 @@
             "value": 3
         },
         "managementSubnet": {
-            "value": "fa-soln-db-sql-subnet"
+            "value": "cbs-subnet"
         },
         "systemSubnet": {
-            "value": "fa-soln-db-sql-subnet"
+            "value": "cbs-subnet"
         },
         "iSCSISubnet": {
-            "value": "fa-soln-db-sql-subnet"
+            "value": "cbs-subnet"
         },
         "replicationSubnet": {
-            "value": "fa-soln-db-sql-subnet"
+            "value": "cbs-subnet"
         },
         "managementVnet": {
-            "value": "fa-soln-db-vnet"
+            "value": "cbs-vnet"
         },
         "systemVnet": {
-            "value": "fa-soln-db-vnet"
+            "value": "cbs-vnet"
         },
         "iSCSIVnet": {
-            "value": "fa-soln-db-vnet"
+            "value": "cbs-vnet"
         },
         "replicationVnet": {
-            "value": "fa-soln-db-vnet"
+            "value": "cbs-vnet"
         },
         "managementResourceGroup": {
-            "value": "FA-SOLN-DB"
+            "value": "cbs-rg"
         },
         "systemResourceGroup": {
-            "value": "FA-SOLN-DB"
+            "value": "cbs-rg"
         },
         "iSCSIResourceGroup": {
-            "value": "FA-SOLN-DB"
+            "value": "cbs-rg"
         },
         "replicationResourceGroup": {
-            "value": "FA-SOLN-DB"
+            "value": "cbs-rg"
         },
         "jitAccessPolicy": {
             "value": {
@@ -72,15 +72,15 @@
         },
         "tagsByResource": {
             "value": {
-                "Team": "Microsoft",
-                "CreatedBy": "fa-soln-db"
+                "Team": "CBS Team",
+                "CreatedBy": "Administrator"
             }
         },
         "applicationResourceName": {
-            "value": "fasolndbpvsapp"
+            "value": "purecbsapp"
         },
         "managedResourceGroupId": {
-            "value": "fa-soln-db-pvdcbs-mrg"
+            "value": "purecbscbs-mrg"
         }
     }
 }

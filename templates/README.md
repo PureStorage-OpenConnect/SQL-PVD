@@ -1,13 +1,11 @@
 ### Pure Validated Design
 
-# Scripts Folder
+# Template Folder
 ## Files in this repository:
-* create_Azure_offload_target.ps1
-  * Create an Azure Blob Offload Target on a Pure FlashArray.
-* create_sqlfci_Azure.ps1
-  * Create a 2-node Windows Server Failover Cluster and SQL Server Failover Instance in Azure on Azure Virtual Machines.
-* create_sqlfci_VMware.ps1
-  * Create a 4-node Windows Server Failover Cluster and SQL Server Failover Instance on vSphere ESXi.
+* cbs_parameterfile.json
+  * An example ARM parameter file that should be used with the cbs_templatefile.json. It must be modified to suit your environment.
+* cbs_templatefile.json
+  * The ARM template file.
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->
