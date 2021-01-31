@@ -3,11 +3,9 @@
 # Template Folder
 ## Files in this repository:
 * _cbs_parameterfile.json_ and _cbs_templatefile.json_
-  * #### These files are used together in an ARM Template deployment of the Pure Cloud Block Store on Azure.
-  * #### The _cbs_parameterfile.json_ file must be modified to suit your environment.
-  * #### To deploy this template, run these commands in Azure CLI:
-    * `az account set --subscription <your_subscription_ID>`
-    * `az deployment group create --resource-group <resource_group> --template-file cbs_templatefile.json --parameters cbs_parameterfile.json`
+  - These files are used together as an ARM Template deployment of the Pure Cloud Block Store on Azure. The _cbs_parameterfile.json_ file must be modified to suit your environment. To deploy this template, run these commands in Azure CLI:
+    - `az account set --subscription <your_subscription_ID>`
+    - `az deployment group create --resource-group <resource_group> --template-file cbs_templatefile.json --parameters cbs_parameterfile.json`
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
