@@ -2,11 +2,13 @@
 
 # Scripts Folder
 ## Files in this repository:
-* create-Azure-offload-target.ps1
-  * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and confiuration of the FlashArray.
-* create-sqlfci-Azure.ps1
-  * Create a 2-node Windows Server Failover Cluster and SQL Server Failover Instance in Azure on Azure Virtual Machines.
-* create-sqlfci-VMware.ps1
+* **Create-Azure-offload-target.ps1**
+  * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
+* **Create-sqlfci-Azure.ps1**
+  * Create a 2-node Windows Server Failover Cluster and SQL Server Failover Instance in Azure on Azure Virtual Machines. The script requires the _CreateWSFCSharedDisk.json_ file.
+* **CreateWSFCSharedDisk.json**
+  * This file is used with the _create-sqlfci-Azure.ps1_ file to create an initial shared disk in Azure.
+* **Create-sqlfci-VMware.ps1**
   * Create a 4-node Windows Server Failover Cluster and SQL Server Failover Instance on vSphere ESXi.
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
