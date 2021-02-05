@@ -1,13 +1,14 @@
 ### Pure Validated Design
 
 # Scripts Folder
-## Files in this repository:
-* **Create-Azure-offload-target.ps1**
-  * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
+#### Installation and configuration of Pure Cloud Block Store and SQL FCI on Azure:
 * **Create-sqlfci-Azure.ps1**
   * Create a 2-node Windows Server Failover Cluster and SQL Server Failover Instance in Azure on Azure Virtual Machines. The script requires the _CreateWSFCSharedDisk.json_ file.
 * **CreateWSFCSharedDisk.json**
   * This file is used with the _create-sqlfci-Azure.ps1_ file to create an initial shared disk in Azure.
+* **Create-Azure-offload-target.ps1**
+  * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
+#### Installation and configuration of FlashArray and SQL FCI on-premises:
 * **Create-sqlfci-VMware.ps1**
   * Create a 4-node Windows Server Failover Cluster and SQL Server Failover Instance on vSphere ESXi.
 <!-- wp:separator -->
