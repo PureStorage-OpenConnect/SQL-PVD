@@ -12,7 +12,7 @@
 # Requirements:
 #  Azure Az module
 #  Pure Storage PowerShell SDK v1 module
-#  Flasharray array adminlogin credentials
+#  Flasharray array admin login credentials
 #
 #
 #### Start
@@ -100,7 +100,7 @@ $nic = New-AzNetworkInterface -Name myNic -ResourceGroupName $resourceGroup -Loc
 ## Define a credential object
 $cred = Get-Credential
 
-# Create VMs
+## Create VMs
 # Alter the size of the VMs to fit workload.
 $vmConfig1 = New-AzVMConfig -VMName $vmNode1Name -VMSize Standard_DS2_v3 -Zone 1 -EnableUltraSSD | Set-AzVMOperatingSystem -Windows -ComputerName $vmNode1Name -Credential $cred | Set-AzVMSourceImage -PublisherName MicrosoftWindowsServer -Offer WindowsServer -Skus 2019-Datacenter -Version latest | Add-AzVMNetworkInterface -Id $nic.Id
 New-AzVM -ResourceGroupName $resourceGroup -Location westus2 -VM $vmConfig1
@@ -108,44 +108,75 @@ New-AzVM -ResourceGroupName $resourceGroup -Location westus2 -VM $vmConfig1
 $vmConfig2 = New-AzVMConfig -VMName $vmNode2Name -VMSize Standard_DS2_v3 -Zone 1 -EnableUltraSSD | Set-AzVMOperatingSystem -Windows -ComputerName $vmNode2Name -Credential $cred | Set-AzVMSourceImage -PublisherName MicrosoftWindowsServer -Offer WindowsServer -Skus 2019-Datacenter -Version latest | Add-AzVMNetworkInterface -Id $nic.Id
 New-AzVM -ResourceGroupName $resourceGroup -Location westus2 -VM $vmConfig2 -EnableUltraSSD
 
-# Add WSFC and MPIO features to VMs. This action requires a restart of the VM.
+### End Azure Work
+
+### Begin pre-WSFC work
+
+## Add WSFC and MPIO features to VMs. This action requires a restart of the VM.
 $servers = ($vmNode1Name, $vmNode2Name)
 foreach ($server in $servers) {
     Get-Service -Name MSiSCSI | Start-Service
     Start-Sleep -Seconds 2
-    Set-Service -Name msiscsi -StartupType Automatic
+    Set-Service -Name MSiSCSI -StartupType Automatic
     Install-WindowsFeature -Name Failover-Clustering,Multipath-IO -ComputerName $server -Credential $cred -IncludeManagementTools -Restart
 }
-# Configure MPIO & iSCSI. This MPIO SupportedHW change and MPIOSetting changes require a reboot.
+## Configure MPIO & iSCSI. This MPIO SupportedHW change and MPIOSetting changes require a reboot.
 foreach ($server in $servers) {
-    New-MSDSMSupportedHw -VendorId PURE -ProductId FlashArray
     New-MSDSMSupportedHW -VendorId MSFT2005 -ProductId iSCSIBusType_0x9
     Set-MPIOSetting -NewPathRecoveryInterval 20 -CustomPathRecovery Enabled -NewPDORemovePeriod 30 -NewDiskTimeout 60 -NewPathVerificationState Enabled
     Set-MSDSMGlobalDefaultLoadBalancePolicy -Policy RR
     Restart-Computer -ComputerName $server -Credential $cred
 }
 
-# iSCSI
-$iqn1 = Get-InitiatorPort -CimSession $vmNode1Name | Where-Object {$_.NodeAddress -le "iqn.*"} | ForEach-Object {($_.NodeAddress -split ":3240")[0]}
-$iqn2 = Get-InitiatorPort -CimSession $vmNode2Name | Where-Object { $_.NodeAddress -le "iqn.*" } | ForEach-Object {($_.NodeAddress -split ":3240")[0]}
-$vmNode1Nic = $iqn1.NodeAddress
-$vmNode2Nic = $iqn2.NodeAddress
-New-IscsiTargetPortal -InitiatorPortalAddress $nic2 -TargetPortalAddress $target1 -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
-New-IscsiTargetPortal -InitiatorPortalAddress $nic3 -TargetPortalAddress $target3 -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
-Start-Sleep -Seconds 2
-$targetnames = Get-IscsiTarget
-$targetname = $targetnames[0]
-Connect-IscsiTarget -InitiatorPortalAddress $nic2 -TargetPortalAddress $target1 -IsMultipathEnabled $true -NodeAddress $vmNode1Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic2 -TargetPortalAddress $target2 -IsMultipathEnabled $true -NodeAddress $vmNode1Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic2 -TargetPortalAddress $target3 -IsMultipathEnabled $true -NodeAddress $vmNode1Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic2 -TargetPortalAddress $target4 -IsMultipathEnabled $true -NodeAddress $vmNode1Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic3 -TargetPortalAddress $target1 -IsMultipathEnabled $true -NodeAddress $vmNode2Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic3 -TargetPortalAddress $target2 -IsMultipathEnabled $true -NodeAddress $vmNode2Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic3 -TargetPortalAddress $target3 -IsMultipathEnabled $true -NodeAddress $vmNode2Nic -IsPersistent $true
-Connect-IscsiTarget -InitiatorPortalAddress $nic3 -TargetPortalAddress $target4 -IsMultipathEnabled $true -NodeAddress $vmNode2Nic -IsPersistent $true
+### End pre-WSFC work
 
+### Begin iSCSI and Array work
 
-### End Azure Work
+## Get the iSCSI node address from the VMs
+$iqn1 = (Get-InitiatorPort -CimSession $vmNode1Name | Where-Object { $_.NodeAddress -like "*iqn*" }).NodeAddress
+$iqn2 = (Get-InitiatorPort -CimSession $vmNode2Name | Where-Object { $_.NodeAddress -like "*iqn*" }).NodeAddress
+
+## Connect to Array
+# We need to connect to the array at this point to connect the hosts and get iSCSI info from the array. While were here, create the Host Group.
+# There are several ways to connect to a FlashArray. please refer to the Powershell SDK documentation at https://support.purestorage.com.
+# The method below will prompt for the user name and password for the array.
+$array = New-PfaArray -EndPoint $arrayEndpoint -Credentials (Get-Credential) -IgnoreCertificateError
+# This method will use pre-defined variables (not stated in this example script) for the credentials.
+# Connect-Pfa2Array -Endpoint $array -Username $Username -Password $Password -IgnoreCertificateError
+
+## Create the hosts and host group
+New-PfaHost –Array $array –Name $vmNode1Name –IqnList $iqn1
+New-PfaHost –Array $array –Name $vmNode2Name –IqnList $iqn2
+New-PfaHostGroup -Array $array -Hosts $vmNode1Name, $vmNode2Name -Name "sqlfcigroup"
+## Create volume and add to hostgroup
+New-PfaVolume –Array $array –VolumeName "sqlfci-vol1" –Unit "TB" –Size 1
+New-PfaHostGroupVolumeConnection -Array $array -VolumeName "sqlfci-vol1" -HostGroupName "sqlfcigroup"
+
+$HostIPs = Get-WmiObject Win32_NetworkAdapterConfiguration -Namespace 'root\CIMv2' | Where-Object { $_.IPEnabled }
+    foreach ($HostIP in $HostIPs) {
+    New-Object PSObject -Property @{
+    IPAddress = $HostIP.IPAddress[0]
+    Subnet = $HostIP.IPSubnet[0]
+    Adapter = $HostIP.Description
+        }
+    }
+
+$IscsiInitTargetClass = Get-WmiObject -Namespace 'root\wmi' -Class MSiSCSIInitiator_TargetClass
+    foreach ($IscsiInitTarget in $IscsiInitTargetClass) {
+        foreach ($IscsiTargetPortal in $IscsiInitTarget.PortalGroups.Get(0).Portals) {
+            New-Object PSObject -Property  @{
+            IscsiTarget = $IscsiInitTarget.TargetName
+            IscsiTargetAddress = $IscsiTargetPortal.Address
+            IscsiTargetPort = $IscsiTargetPortal.Port
+            }
+        }
+    }
+
+New-IscsiTargetPortal -InitiatorPortalAddress $iqn1 -TargetPortalAddress $array1nic -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
+New-IscsiTargetPortal -InitiatorPortalAddress $iqn2 -TargetPortalAddress $array1nic -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
+
+### End iSCSI and Array work
+
 
 ### Begin Initial Cluster Work
 ## Create WSFC
@@ -163,23 +194,6 @@ New-Cluster -Name $clusterName -Node ($vmNode1Name, $vmNode2Name) –StaticAddre
 Test-Cluster -Node $vmNode1Name, $vmNode2Name
 
 ### End Initial Cluster Work
-
-### Begin FlashArray Work (on-premises or Pure Cloud Block Store via iSCSI)
-## Connect
-# There are several ways to connect to a FlashArray. please refer to the Powershell SDK documentation at https://support.purestorage.com.
-# The method below will prompt for the user name and password for the array.
-$array = New-PfaArray -EndPoint $arrayEndpoint -Credentials (Get-Credential) -IgnoreCertificateError
-# This method will use pre-defined variables (not stated in this example script) for the credentials.
-# Connect-Pfa2Array -Endpoint $array -Username $Username -Password $Password -IgnoreCertificateError
-
-## Add hosts
-# Create hosts and hostgroup
-New-PfaHost –Array $array –Name $vmNode1Name –IqnList $vmNode1Nic
-New-PfaHost –Array $array –Name $vmNode2Name –IqnList $vmnode2Nic
-New-PfaHostGroup -Array $array -Hosts $vmNode1Name, $vmNode2Name -Name 'sqlfcigroup'
-## Create shared volume and add to hostgroup
-New-PfaVolume –Array $array –VolumeName 'sqlfci-vol1' –Unit 'TB' –Size 2
-New-PfaHostGroupVolumeConnection -Array $array -VolumeName 'sqlfci-vol1' -HostGroupName 'sqlfcigroup'
 
 ### Begin Final Cluster Work
 ## Configure volume for use in cluster
