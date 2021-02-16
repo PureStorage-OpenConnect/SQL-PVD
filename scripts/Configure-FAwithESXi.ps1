@@ -93,8 +93,9 @@ Get-PfaNtpServers -Array $array2
 Get-VMHost -name $esxiHost1Name | Get-VMHostNtpServer
 Get-VMHost -Name $esxiHost2Name | Get-VMHostNtpServer
 # Get Host copnnection health status
-New-PfaCLICommand -EndPoint $array1Endpoint -Credentials $Creds -CommandText
-New-PfaCLICommand -EndPoint $array2Endpoint -Credentials $Creds -CommandText
+# Please ensure that all FC ports have a status of "ok".
+New-PfaCLICommand -EndPoint $array1Endpoint -Credentials $Creds -CommandText "purehw list --type fc"
+New-PfaCLICommand -EndPoint $array2Endpoint -Credentials $Creds -CommandText "purehw list --type fc"
 
 # Disconnect from vCenter
 Disconnect-VIServer $vcenter
