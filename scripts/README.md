@@ -1,6 +1,16 @@
 ### Pure Validated Design
 
 # Scripts Folder
+#### Installation and configuration of FlashArray and SQL FCI on-premises:
+* **Create-ESXi-VMs-RDM.ps1**
+  * Create a Windows Server Failover Cluster VMs with RDM disk on vSphere ESXi.
+* **Create-WSFC-Sqlfci-VMware.ps1**
+  * Create a 4-node WSFC and SQLFCI with Vmware VMs.
+* **Create-OffloadfromPod.ps1**
+  * Create Offload Targets from Pod on FlashArray.
+* **Create-SSMS-Backups.ps1**
+  * Create and restore application consistent snapshots using Pure Storage SSMS extsnsion, VSS provider, and SQLbackup SDK.
+
 #### Installation and configuration of Pure Cloud Block Store and SQL FCI on Azure:
 * **Create-sqlfci-Azure.ps1**
   * Create a 2-node Windows Server Failover Cluster and SQL Server Failover Instance in Azure on Azure Virtual Machines. The script requires the _CreateWSFCSharedDisk.json_ file.
@@ -8,9 +18,8 @@
   * This file is used with the _create-sqlfci-Azure.ps1_ file to create an initial shared disk in Azure.
 * **Create-Azure-offload-target.ps1**
   * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
-#### Installation and configuration of FlashArray and SQL FCI on-premises:
-* **Create-sqlfci-VMware.ps1**
-  * Create a 4-node Windows Server Failover Cluster and SQL Server Failover Instance on vSphere ESXi.
+* **Create-ArrayReplicationwithCBS.ps1**
+
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->
