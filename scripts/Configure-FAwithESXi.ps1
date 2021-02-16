@@ -74,41 +74,55 @@ foreach ($wwn in $wwn1)   {
 foreach ($wwn in $wwn2)   {
     $wwpn2 =​​ "{0:x}"​​ -f​​ $hba.PortWorldWideName
 }
-# Disconnect from vCenter
-Disconnect-VIServer $vcenter
 
-## Connect to FlashArray
+## Connect to FlashArrays
 # We need to connect to the array at this point to connect the hosts and get iSCSI info from the array. While were here, create the Host Group.
 # There are several ways to connect to a FlashArray. please refer to the Powershell SDK documentation at https://support.purestorage.com.
 # The method below will prompt for the user name and password for the array.
-$array = New-PfaArray -EndPoint $arrayEndpoint -Credentials (Get-Credential) -IgnoreCertificateError
+$Creds = Get-Credential
+$array1 = New-PfaArray -EndPoint $arrayEndpoint -Credentials $Creds -IgnoreCertificateError
+$array2 = New-PfaArray -EndPoint $arrayEndpoint -Credentials $Creds -IgnoreCertificateError
 # This method will use pre-defined variables (not stated in this example script) for the credentials.
 # Connect-Pfa2Array -Endpoint $array -Username $Username -Password $Password -IgnoreCertificateError
+
+# Array - ESXi checks
+# You MUST ensure that the ESXi hosts and the FlashArrays are in time sync and they shojld be referencing the same NTP servers.
+# View the output below and make sure they are accurate.
+Get-PfaNtpServers -Array $array1
+Get-PfaNtpServers -Array $array2
+Get-VMHost -name $esxiHost1Name | Get-VMHostNtpServer
+Get-VMHost -Name $esxiHost2Name | Get-VMHostNtpServer
+# Get Host copnnection health status
+New-PfaCLICommand -EndPoint $array1Endpoint -Credentials $Creds -CommandText
+New-PfaCLICommand -EndPoint $array2Endpoint -Credentials $Creds -CommandText
+
+# Disconnect from vCenter
+Disconnect-VIServer $vcenter
 
 ## Create hosts in FlashArray
 ## Create the hosts and host group
 foreach ($wwn in $wwpn1) {
-New-PfaHost –Array $array –Name $esxiHost1Name –WwnList $wwn
+New-PfaHost –Array $array1 –Name $esxiHost1Name –WwnList $wwn
 }
 foreach ($wwn in $wwpn2) {
-New-PfaHost –Array $array –Name $esxiHost2Name –WwnList $wwn
+New-PfaHost –Array $array1 –Name $esxiHost2Name –WwnList $wwn
 }
-New-PfaHostGroup -Array $array -Hosts $esxiHost1Name, $esxiHost2Name -Name $hostgroupName
+New-PfaHostGroup -Array $array1 -Hosts $esxiHost1Name, $esxiHost2Name -Name $hostgroupName
 
 ## Set host personality
-Set-PfaPersonality -Array $array -Name $esxiHost1Name -Personality ESXi
-Set-PfaPersonality -Array $array -Name $esxiHost2Name -Personality ESXi
+Set-PfaPersonality -Array $array1 -Name $esxiHost1Name -Personality ESXi
+Set-PfaPersonality -Array $array1 -Name $esxiHost2Name -Personality ESXi
 
 ## Create a volume on ESXi Host 1
-New-PfaVolume –Array $array –VolumeName $volumeName –Unit $volUnit –Size $volSize
+New-PfaVolume –Array $array1 –VolumeName $volumeName –Unit $volUnit –Size $volSize
 
 ## Create a Pod, Add the volume (must be done before Stretching)
-New-PfaPod -Array $array -Name $podName
-Move-PfaVolumeOrSnapshot -Array $array -Name $volumeName -Container $podName
+New-PfaPod -Array $array1 -Name $podName
+Move-PfaVolumeOrSnapshot -Array $array1 -Name $volumeName -Container $podName
 
 # Stretch the Pod to Array 2 and set failover preference
-Add-PfaArrayToPod -Array $array -PodName $podName -ArrayName $array2Endpoint
-Set-PfaPod -Array $array -FailoverPreference $array1Endpoint -Name $podName
+Add-PfaArrayToPod -Array $array1 -PodName $podName -ArrayName $array2Endpoint
+Set-PfaPod -Array $array1 -FailoverPreference $array1Endpoint -Name $podName
 
 ### END
 
