@@ -1,4 +1,21 @@
-# Q's work
+# Create-ESXi-VMs-RDM.ps1
+#
+# : Revision 1.0.0.0
+# :: initial release
+#
+# Example script to create ESXi virtual machines with RDM disk storage.
+# This is not intended to be a complete run script. It is for example purposes only.
+# Variables should be modified to suit the environment.
+#
+# This script is AS-IS. No warranties expressed or implied by Pure Storage or the author.
+#
+# Requirements:
+#  vSphere PowerCLI
+#  Pure Storage PowerShell SDK v1 module
+#  Flasharray array admin login credentials
+#
+#
+#### Start
 
 #w/o vCenter certificate setup you have to ignore
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
@@ -27,3 +44,5 @@ Get-HardDisk -VM sqlvm1 -DiskType RawPhysical | New-ScsiController -type paravir
 #attach RDM to VMx
 $hd2 = New-HardDisk -VM sqlvm2 -DiskPath $hd1.FileName
 $ctrl2 = New-ScsiController -HardDisk $hd2 -Type paravirtual -BusSharingMode Physical
+
+## END

@@ -6,8 +6,8 @@
   * Create a Windows Server Failover Cluster VMs with RDM disk on vSphere ESXi.
 * **Create-WSFC-Sqlfci-VMware.ps1**
   * Create a 4-node WSFC and SQLFCI with Vmware VMs.
-* **Create-OffloadfromPod.ps1**
-  * Create Offload Targets from Pod on FlashArray.
+* **Create-OffloadTargetFromPod.ps1**
+  * Create Offload Targets from a Pod on a FlashArray.
 * **Create-SSMS-Backups.ps1**
   * Create and restore application consistent snapshots using Pure Storage SSMS extsnsion, VSS provider, and SQLbackup SDK.
 
