@@ -21,8 +21,6 @@ $resourceGroup = 'wsfc-rg'
 $location = 'westus2'
 $vmNode1Name = "node1"
 $vmNode2Name = "node2"
-$clusterName = "cluster1"
-$clusterIPAddress = "10.10.1.1"
 $sharedDiskName = "shareddisk1"
 $ppgName = "sqlfci-ppg" # Only necessary if you use proximity placement groups
 $arrayEndpoint = "10.1.1.1" # On-premises FlashArray or Pure Cloud Block Store IP address
@@ -65,7 +63,10 @@ try {
 #
 ### Begin Azure Work
 
-########################### DOMAIN CONTROLLER??????
+###################################################################################################
+### Active Directory Domain
+# It is assumed that you have an operational Active Directory controller available on-premises. Extending that AD to Azure either by adding a Virtual Machine as a Domain Controller in Azure, or by extending AD with Azure Active Directory Services (AADS) is optimal and will ensire seamless domain and DNS operations. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/learn/modules/deploy-manage-azure-iaas-active-directory-domain-controllers-azure/
+###################################################################################################
 
 # Connect to Azure
 Connect-AzAccount
@@ -79,25 +80,26 @@ Connect-AzAccount
 # To determine which Zones are available for a region, run this cmdlet, replacing the region:
 # Get-AzComputeResourceSku | where {$_.Locations.Contains("eastus")};
 New-AzResourceGroup -Name $resourceGroup -Location westus2
+
 # Create a subnet configuration
 $subnetConfig = New-AzVirtualNetworkSubnetConfig -Name fciSubnet -AddressPrefix 172.1.1.0/24
 
 ## Create a virtual network
 # You may choose to an existing vNet.
 # Be sure to alter the parameters as necessary.
-$vnet = New-AzVirtualNetwork -ResourceGroupName $resourceGroup -Location westus2 -Name fciVNet -AddressPrefix 172.1.0.0/16 -Subnet $subnetConfig
+$vnet = New-AzVirtualNetwork -ResourceGroupName $resourceGroup -Location $location -Name fciVNet -AddressPrefix 172.1.0.0/16 -Subnet $subnetConfig
 
 ## Create a public IP address in an availability zone and specify a DNS name
-$pip = New-AzPublicIpAddress -ResourceGroupName $resourceGroup -Location westus2 -Zone 1 -AllocationMethod Static -IdleTimeoutInMinutes 4 -Name "fcipublicdns$(Get-Random)" -Sku Standard
+$pip = New-AzPublicIpAddress -ResourceGroupName $resourceGroup -Location $location -Zone 1 -AllocationMethod Static -IdleTimeoutInMinutes 4 -Name "fcipublicdns$(Get-Random)" -Sku Standard
 
 ## Create an inbound network security group rule for port 3389
 $nsgRuleRDP = New-AzNetworkSecurityRuleConfig -Name myNetworkSecurityGroupRuleRDP  -Protocol Tcp -Direction Inbound -Priority 1000 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389 -Access Allow
 
 ## Create a network security group
-$nsg = New-AzNetworkSecurityGroup -ResourceGroupName $resourceGroup -Location westus2 -Name fcinsg -SecurityRules $nsgRuleRDP
+$nsg = New-AzNetworkSecurityGroup -ResourceGroupName $resourceGroup -Location $location -Name fcinsg -SecurityRules $nsgRuleRDP
 
 ## Create a virtual network card and associate with public IP address and NSG
-$nic = New-AzNetworkInterface -Name myNic -ResourceGroupName $resourceGroup -Location westus2 -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $pip.Id -NetworkSecurityGroupId $nsg.Id
+$nic = New-AzNetworkInterface -Name myNic -ResourceGroupName $resourceGroup -Location $location -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $pip.Id -NetworkSecurityGroupId $nsg.Id
 
 ## Define a credential object
 $cred = Get-Credential
@@ -117,7 +119,6 @@ Set-DnsClientServerAddress -CimSession $vmNode1name -InterfaceIndex $netIndex -S
 $netIndex = Get-NetAdapter -CimSession $vmNode2name | Select-Object InterfaceIndex
 Set-DnsClientServerAddress -CimSession $vmNode2name -InterfaceIndex $netIndex -ServerAddresses ($domainDCIp, "1.1.1.1")
 Add-Computer -ComputerName vmNode1name, vmNode2name -DomainName $domainName –Credential $cred -Restart –Force
-
 ### End Azure Work
 
 ### Begin pre-WSFC work
@@ -130,6 +131,7 @@ foreach ($server in $servers) {
     Set-Service -Name MSiSCSI -StartupType Automatic
     Install-WindowsFeature -Name Failover-Clustering,Multipath-IO -ComputerName $server -Credential $cred -IncludeManagementTools -Restart
 }
+
 ## Configure MPIO & iSCSI. This MPIO SupportedHW change and MPIOSetting changes require a reboot.
 foreach ($server in $servers) {
     New-MSDSMSupportedHw -VendorId PURE -ProductId FlashArray
@@ -138,11 +140,9 @@ foreach ($server in $servers) {
     Set-MPIOSetting -NewPathRecoveryInterval 20 -CustomPathRecovery Enabled -NewPDORemovePeriod 30 -NewDiskTimeout 60 -NewPathVerificationState Enabled
     Restart-Computer -ComputerName $server -Credential $cred
 }
-
 ### End pre-WSFC work
 
 ### Begin iSCSI and Array work
-
 ## Get the iSCSI node address from the VMs
 $iqn1 = (Get-InitiatorPort -CimSession $vmNode1Name | Where-Object { $_.NodeAddress -like "*iqn*" }).NodeAddress
 $iqn2 = (Get-InitiatorPort -CimSession $vmNode2Name | Where-Object { $_.NodeAddress -like "*iqn*" }).NodeAddress
@@ -159,92 +159,36 @@ $array = New-PfaArray -EndPoint $arrayEndpoint -Credentials (Get-Credential) -Ig
 New-PfaHost –Array $array –Name $vmNode1Name –IqnList $iqn1
 New-PfaHost –Array $array –Name $vmNode2Name –IqnList $iqn2
 New-PfaHostGroup -Array $array -Hosts $vmNode1Name, $vmNode2Name -Name "sqlfcigroup"
+
 ## Create volume and add to hostgroup
 New-PfaVolume –Array $array –VolumeName "sqlfci-vol1" –Unit "TB" –Size 1
 New-PfaHostGroupVolumeConnection -Array $array -VolumeName "sqlfci-vol1" -HostGroupName "sqlfcigroup"
+
 ## Retrieve array iSCSI address. Only one address is required for CBS arrays.
 $ips = (Get-PfaArrayPorts -Array $array).portal
     Foreach ($ip in $ips) {
         $ipNoPort = ($ip | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
     }
+
+    # This will create the number of iSCSI sessions. This number can be between 2 and 32. Pure recommends a higher iSCSI session count for more transactional and IO heavy workloads. Replace the "32" with the number you choose.
+$iSessions = "32"
 $servers = ($vmNode1Name, $vmNode2Name)
-    foreach ($server in $servers) {
-    New-IscsiTargetPortal -TargetPortalAddress $ipNoPort
+For ($i = 1; $i -le $iSessions; $i++) {
+        foreach ($server in $servers) {
+        New-IscsiTargetPortal -TargetPortalAddress $ipNoPort
+    }
 }
-
-$HostIPs = Get-WmiObject Win32_NetworkAdapterConfiguration -Namespace 'root\CIMv2' | Where-Object { $_.IPEnabled }
-    foreach ($HostIP in $HostIPs) {
-    New-Object PSObject -Property @{
-    IPAddress = $HostIP.IPAddress[0]
-    Subnet = $HostIP.IPSubnet[0]
-    Adapter = $HostIP.Description
-        }
-    }
-
-$IscsiInitTargetClass = Get-WmiObject -Namespace 'root\wmi' -Class MSiSCSIInitiator_TargetClass
-    foreach ($IscsiInitTarget in $IscsiInitTargetClass) {
-        foreach ($IscsiTargetPortal in $IscsiInitTarget.PortalGroups.Get(0).Portals) {
-            New-Object PSObject -Property  @{
-            IscsiTarget = $IscsiInitTarget.TargetName
-            IscsiTargetAddress = $IscsiTargetPortal.Address
-            IscsiTargetPort = $IscsiTargetPortal.Port
-            }
-        }
-    }
-
-New-IscsiTargetPortal -InitiatorPortalAddress $iqn1 -TargetPortalAddress $array1nic -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
-New-IscsiTargetPortal -InitiatorPortalAddress $iqn2 -TargetPortalAddress $array1nic -InitiatorInstanceName "ROOT\ISCSIPRT\0000_0"
-
+Restart-Computer -ComputerName $server -Credential $cred
 ### End iSCSI and Array work
 
+###################################################################################################
+### Create Clusters
+# It is assumed that you will create a WSFC cluster using the Server 2019 operating system. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/windows-server/failover-clustering/create-failover-cluster
+# It is assumed that you will create a SQL Server FCI on the preceding WSFC. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/sql/sql-server/failover-clusters/install/create-a-new-sql-server-failover-cluster-setup?view=sql-server-ver15
+###################################################################################################
 
-### Begin Initial Cluster Work
-## Create WSFC
-# These commands must be run on one of the cluster nodes unless modified for remoting.
-# Run pre-cluster validation on hardware and software
-# Be sure to correct any issues with storage or network-related issues before proceeding.
-Test-Cluster -Node $vmNode1Name, $vmNode2Name
-
-## Create the cluster for Server 2019. Comment out for Server 2012R2 or 2016 and un-comment the line further below
-New-Cluster -Name $clusterName -Node ($vmNode1Name, $vmNode2Name) –StaticAddress $clusterIPAddress -NoStorage -ManagementPointNetworkType Singleton
-## Create the cluster for Server 2012R2 or 2016. Comment out for Server 2019 and un-comment the line above.
-# New-Cluster -Name <FailoverCluster-Name> -Node ("<node1>", "<node2>") –StaticAddress <n.n.n.n> -NoStorage
-
-## Validate cluster after cluster creation
-Test-Cluster -Node $vmNode1Name, $vmNode2Name
-
-### End Initial Cluster Work
-
-### Begin Final Cluster Work
-## Configure volume for use in cluster
-
-
-## Add volume to Cluster as CSV
-
-
-
-## Create SQLFCI
-
-
-
-
-### End Final Cluster Work
-
-
-## Install the SQLIaaSAgent to manage the SQL server via the Azure Portal.
-# This is optional.
-$vm = Get-AzVM -Name $vmNode1Name -ResourceGroupName $resourceGroup
-New-AzSqlVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName -Location $vm.Location -LicenseType PAYG -SqlManagementType LightWeight
-$vm = Get-AzVM -Name $vmNode2Name -ResourceGroupName $resourceGroup
-New-AzSqlVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName -Location $vm.Location -LicenseType PAYG -SqlManagementType LightWeight
-
-
-
-
-
-
-## Create a new shared disk.
-# This is optional. This can be a temporary disk for the cluster quorum until the FlashArray Volumes are connected.
+# You may also create a cluster witness for quorom. This can be a volume on the FlashArray or as an azure Shared Disk (Premium or UltraSSD).
+# This is the code for Azure Managed Shared Disk. This can be a temporary disk for the cluster quorum until the FlashArray Volumes are connected.
 # The "NewWSFCSharedDisk.json" file must exist in the same folder for this function to work.
 function New-Shared-Disk () {
     New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup -TemplateFile "NewWSFCSharedDisk.json"
@@ -254,11 +198,11 @@ function New-Shared-Disk () {
     Update-AzVM -VM $vm -ResourceGroupName $resourceGroup
 }
 
+## Install the SQLIaaSAgent to manage the SQL server via the Azure Portal.
+# This is optional and allows for the monitoring of the SQL IaaS VM within Azure.
+$vm = Get-AzVM -Name $vmNode1Name -ResourceGroupName $resourceGroup
+New-AzSqlVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName -Location $vm.Location -LicenseType PAYG -SqlManagementType LightWeight
+$vm = Get-AzVM -Name $vmNode2Name -ResourceGroupName $resourceGroup
+New-AzSqlVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName -Location $vm.Location -LicenseType PAYG -SqlManagementType LightWeight
 
-
-
-
-$vm = Get-AzVM -ResourceGroupName "sqlfci-rg" -Name "node1"
-$dataDisk = Get-AzDisk -ResourceGroupName $resourceGroup -DiskName "sql_share_1"
-$vm = Add-AzVMDataDisk -VM $vm -Name "sqlshare_1" -CreateOption Attach -ManagedDiskId $dataDisk.Id -Lun 2
-Update-AzVM -VM $vm -ResourceGroupName $resourceGroup
+#### END
