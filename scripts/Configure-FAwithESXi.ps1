@@ -1,9 +1,9 @@
-# Create-ActiveCluster.ps1
+# Configure-FAwithESXi.ps1
 #
 # : Revision 1.0.0.0
 # :: initial release
 #
-# Example script to create a FlashArray ActiveCluster configuration.
+# Example script to configure a FlashArray for ESXi hosts with personaility, host group, pod, and volumes.
 # This is not intended to be a complete run script. It is for example purposes only.
 # Variables should be modified to suit the environment.
 #
@@ -16,4 +16,3 @@
 #
 #### Start
 ## Define variables
-
