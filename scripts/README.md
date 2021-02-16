@@ -18,7 +18,8 @@
   * This file is used with the _create-sqlfci-Azure.ps1_ file to create an initial shared disk in Azure.
 * **Create-Azure-offload-target.ps1**
   * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
-* **Create-ArrayReplicationwithCBS.ps1**
+* **Create-ArrayReplication.ps1**
+  * Create replication between two FlashArrays, either on-premises or Cloud Block Store.
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>

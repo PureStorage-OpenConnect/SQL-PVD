@@ -17,6 +17,14 @@
 #  Flasharray array adminlogin credentials
 #
 ### Start
+# Change variables to suit
+$OTName = "AzureBlob"
+$AZStorageAccount = "flasharraystorage" # Must be unique
+$azureContainerName = "offload"
+$resourceGroup = "FlashArrayoffload-rg" # Change to suit
+$location = "westus2" # Change to suit
+$arrayEndpoint = "10.1.1.1"
+
 ## Verify requirements
 try {
     Write-Host "Checking for elevated permissions..."
@@ -60,25 +68,18 @@ Connect-AzAccount
 # Get-AzContext
 # Set-AzContext -Subscription <subscrptionID_or_name>
 
-# Change variables to suit
-$resourceGroup = "storage-resource-group"
-$location = "westus"
-$sAccountName = "MyStorageAccount"
-$OTName = "azuretarget"
-$arrayEndpoint = "10.1.1.1"
-
 # Create the resource group or comment out if already exists
 New-AzResourceGroup -Name $resourceGroup -Location $location
 
 # Create the storage account
-$AzAccount = New-AzStorageAccount -ResourceGroupName $resourceGroup -Name $sAccountName -Location $location -SkuName Standard_RAGRS -Kind StorageV2
+$AzAccount = New-AzStorageAccount -ResourceGroupName $resourceGroup -Name $AZStorageAccount -Location $location -SkuName Standard_LRS -Kind StorageV2
 
 # Uncomment to create specific container if necessary (refer to Purity CloudSnap Best Practices Guide for more infromation)
 #$sContainername = "MyContainer" # Change to suit
 #New-AzStorageContainer -Name sContainerName -Permission Container
 
 # Obtain Access key and store in variable
-$secretKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroup -AccountName sAccountName) | Where-Object { $_.KeyName -eq "key1" }
+$secretKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroup -Name $AZStorageAccount).Value[0]
 
 ## Begin FlashArray
 # Connect to FlashArray
@@ -90,6 +91,6 @@ $array = New-PfaArray -EndPoint $arrayEndpoint -Credentials (Get-Credential) -Ig
 
 # Create the Offload Target.
 # Add -ContainerName parameter if a container was specified above. Otherwise the defualt name is "offload".
-Connect-PfaOffloadAzureTarget -Array $array -Name $OTName -AccountName $AzAccount -SecretAccessKey $secretKey -ContainerName $azureContainerName -Initialize $True
+Connect-PfaOffloadAzureTarget -Array $array -Name $OTName -AccountName $AzStorageAccount -SecretAccessKey $secretKey -ContainerName $azureContainerName -Initialize $True
 
 ### END
