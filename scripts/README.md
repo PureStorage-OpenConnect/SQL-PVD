@@ -10,6 +10,10 @@
   * Create Offload Targets from a Pod on a FlashArray.
 * **Create-SSMS-Backups.ps1**
   * Create and restore application consistent snapshots using Pure Storage SSMS extsnsion, VSS provider, and SQLbackup SDK.
+* **Configure-FAwithESXi.ps1**
+  * Configure the ESXi hosts in the FlashArray.
+* **Create-ActiveCluster**
+  * Create an ActiveCluster between two Flasharrays.
 
 #### Installation and configuration of Pure Cloud Block Store and SQL FCI on Azure:
 * **Create-sqlfci-Azure.ps1**
