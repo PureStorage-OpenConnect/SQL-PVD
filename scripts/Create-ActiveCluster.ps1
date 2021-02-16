@@ -16,4 +16,11 @@
 #
 #### Start
 ## Define variables
+$array1 = '10.1.1.1'
+$array2 = '10.1.1.2'
+$array1 = New-PfaArray -EndPoint $array1 -Credentials (Get-Credential) -IgnoreCertificateError
+$array2 = New-PfaArray -EndPoint $array2 -Credentials (Get-Credential) -IgnoreCertificateError
+# retrieve connection key
+$KeyString = Get-PfaConnectionKey -Array $Array2
+$replAddress = (Get-PfaNetworkInterfaces -Array $array1 | Where-Object Name -EQ "replbond").address
 
