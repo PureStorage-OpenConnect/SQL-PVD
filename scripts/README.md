@@ -21,6 +21,8 @@ Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www
   * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
 * [**Create-FlashArrayReplication.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-FlashArrayReplication.ps1)
   * Create replication between two FlashArrays, either on-premises or Cloud Block Store.
+* [**Update-OffloadTarget.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Update-OffloadTarget.ps1)
+  * Workaround script to replicate data inside a pod to a snapshot offload target.
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
