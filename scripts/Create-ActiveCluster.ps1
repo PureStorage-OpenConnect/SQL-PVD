@@ -24,3 +24,11 @@ $array2 = New-PfaArray -EndPoint $array2 -Credentials (Get-Credential) -IgnoreCe
 $KeyString = Get-PfaConnectionKey -Array $Array2
 $replAddress = (Get-PfaNetworkInterfaces -Array $array1 | Where-Object Name -EQ "replbond").address
 
+
+### Q Notes:
+<##
+$Array = New-pfaArray -EndPoint "10.21.231.28" -IgnoreCertificateError -Credentials (Get-Credential)
+$TargetArray = New-pfaArray -EndPoint "10.21.231.24" -IgnoreCertificateError -Credentials (Get-Credential)
+$connectionKey = Get-PfaConnectionKey -Array $TargetArray
+New-PfaReplicationConnection -Array $Array -ManagementAddress "10.21.231.24" -ReplicationAddress "10.21.89.95" -ConnectionKey $connectionKey.connection_key -Types "replication"
+#>
