@@ -61,6 +61,12 @@ New-PfaHost -Array $array1 -PreferredArrays $array2 -Name $host2Name
 New-PfaHost -Array $array2 -PreferredArrays $array1 -Name $host1name
 New-PfaHost -Array $array2 -PreferredArrays $array2 -Name $host2name
 
+## For ESXi set the personality on the Hosts.
+Set-PfaPersonality -Array $array1 -Name $host1name -Personality esxi
+Set-PfaPersonality -Array $array1 -Name $host2name -Personality esxi
+Set-PfaPersonality -Array $array2 -Name $host1name -Personality esxi
+Set-PfaPersonality -Array $array2 -Name $host2name -Personality esxi
+
 ## Create Host group.
 New-PfaHostGroup -Array $array1 -Hosts $host1name, $host2Name -Name $hostgroupName
 
