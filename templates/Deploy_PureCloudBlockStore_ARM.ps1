@@ -1,2 +1,0 @@
-az account set --subscription 81cefe76-78c0-4df5-a564-e900f1ae2ba0
-az deployment group create --resource-group "fa-soln-db-pvd-rg" --template-file cbs_templatefile.json --parameters cbs_parameterfile.json

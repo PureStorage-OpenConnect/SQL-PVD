@@ -24,6 +24,12 @@ Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www
 * [**Update-OffloadTarget.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Update-OffloadTarget.ps1)
   * Workaround script to replicate data inside a pod to a snapshot offload target.
 
+## Pure Cloud Block Store deployment files
+- [**cbs_parameterfile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_parameterfile.json) and [**cbs_templatefile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_templatefile.json)
+  - These files are used together as an ARM Template deployment of the Pure Cloud Block Store on Azure. The _cbs_parameterfile.json_ file must be modified to suit your environment.
+- [**Deploy_PureCloudBlockStore_ARM.ps1**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_parameterfile.json)
+  - Contains the Azure CLI commands mentioned above.
+
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->

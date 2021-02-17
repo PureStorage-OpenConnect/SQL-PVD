@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westus2"
+        },
+        "arrayName": {
+            "value": "cbsarray"
+        },
+        "sku": {
+            "value": "V20MUR2"
+        },
+        "orgDomain": {
+            "value": "puresrorage.com"
+        },
+        "licenseKey": {
+            "value": "xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx"
+        },
+        "alertRecipients": {
+            "value": ""
+        },
+        "pureuserPublicKey": {
+            "value": ""
+        },
+        "zone": {
+            "value": 3
+        },
+        "managementSubnet": {
+            "value": "cbs-subnet"
+        },
+        "systemSubnet": {
+            "value": "cbs-subnet"
+        },
+        "iSCSISubnet": {
+            "value": "cbs-subnet"
+        },
+        "replicationSubnet": {
+            "value": "cbs-subnet"
+        },
+        "managementVnet": {
+            "value": "cbs-vnet"
+        },
+        "systemVnet": {
+            "value": "cbs-vnet"
+        },
+        "iSCSIVnet": {
+            "value": "cbs-vnet"
+        },
+        "replicationVnet": {
+            "value": "cbs-vnet"
+        },
+        "managementResourceGroup": {
+            "value": "cbs-rg"
+        },
+        "systemResourceGroup": {
+            "value": "cbs-rg"
+        },
+        "iSCSIResourceGroup": {
+            "value": "cbs-rg"
+        },
+        "replicationResourceGroup": {
+            "value": "cbs-rg"
+        },
+        "jitAccessPolicy": {
+            "value": {
+                "jitAccessEnabled": true,
+                "jitApprovalMode": "AutoApprove",
+                "maximumJitAccessDuration": "PT8H",
+                "jitApprovers": []
+            }
+        },
+        "tagsByResource": {
+            "value": {
+                "Team": "CBS Team",
+                "CreatedBy": "Administrator"
+            }
+        },
+        "applicationResourceName": {
+            "value": "purecbsapp"
+        },
+        "managedResourceGroupId": {
+            "value": "purecbscbs-mrg"
+        }
+    }
+}
