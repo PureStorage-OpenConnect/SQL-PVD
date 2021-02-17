@@ -1,23 +1,30 @@
-# Create-OffloadTargetFromPod.ps1
-#
-# : Revision 1.0.0.0
-# :: initial release
-#
-# Example script to create an offload target from a Protection Group Pod snapshot.
-# This is not intended to be a complete run script. It is for example purposes only.
-# Variables should be modified to suit the environment.
-#
-# This script is AS-IS. No warranties expressed or implied by Pure Storage or the author.
-#
-# Requirements:
-#  PowerShell version 5.1
-#  Pure Storage PowerShell SDK v1 module
-#  Pure Storage PowerShell SDK v2 module
-#  Flasharray array admin login credentials
-#
-#
-#### Start
+<#
+Create-OffloadTargetFromPod.ps1
 
+: Revision 1.0.0.0
+:: initial release
+
+Example script to create an offload target from a Protection Group Pod snapshot.
+This is not intended to be a complete run script. It is for example purposes only.
+Variables should be modified to suit the environment.
+
+This script is AS-IS. No warranties expressed or implied by Pure Storage or the creator.
+
+Requirements:
+  PowerShell version 5.1
+  Pure Storage PowerShell SDK v1 module
+  Pure Storage PowerShell SDK v2 module
+  Flasharray array admin login credentials
+#>
+#
+### Start
+## Define variables
+$Credential = (Get-Credential)
+$Pod = "pod1"
+$ArrayClientname = "myClient"
+$Target = "array1"
+$ArrayEndpoint = "10.1.1.1"
+<# You may uncomment this to use the script command line parameters instead of defining variables.
 Param (
     [Parameter(Mandatory = $true)][PSCredential]$Credential,
     [Parameter(Mandatory = $true)][String]$Pod,
@@ -25,6 +32,7 @@ Param (
     [Parameter(Mandatory = $true)][String]$Target,
     [Parameter(Mandatory = $true)][String]$ArrayEndpoint
 )
+#>
 
 ## Verify requirements
 #Requires -Version 5.1
@@ -277,10 +285,4 @@ cleanup-tempPod -clonedPodName $clonedPodName
 $newsnap = New-PfaProtectionGroupSnapshot -array $faSDK1 -Protectiongroupname $pgroupname -ReplicateNow -ApplyRetention
 return $newsnap
 
-
-
-
-
-
-
-
+### END
