@@ -17,8 +17,8 @@ Requirements:
 #
 ### Start
 ## Define variables
-$array1Endpoint = '10.1.1.1'
-$array2Endpoint = '10.1.1.2'
+$array1Endpoint = '169.254.0.1'
+$array2Endpoint = '169.254.0.2'
 $podName = "pod1"
 $host1name = "HostA"
 $host2Name = "HostB"

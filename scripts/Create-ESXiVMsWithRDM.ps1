@@ -19,7 +19,7 @@ Requirements:
 
 #### Start
 ## Define variables
-$VCenterServerIP = "10.21.201.188"
+$VCenterServerIP = "169.254.0.1"
 # Without vCenter certificate setup, you have to ignore cert errors. If certificates are configured, comment out the line.
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
 # Connect to vCenter creds popup or automate pulling encrypted creds with other switches.
@@ -30,7 +30,7 @@ $VMTemplate = Get-Template -Name "W2019Template"
 # Specify which datastore to place the VM boot VMDK into.
 $myDatastore = Get-Datastore -Name "VM"
 # Specify a specific ESXi host to place a new VM, or you could specify a cluster with DRS.
-$vmhost = Get-VMHost -Name "10.21.201.54"
+$vmhost = Get-VMHost -Name "169.254.0.2"
 $VMName1 = "testvm1"
 $VMName2 = "testvm2"
 ## End Define variables

@@ -26,9 +26,9 @@ $vmNode1Name = "node1"
 $vmNode2Name = "node2"
 $sharedDiskName = "shareddisk1"
 $ppgName = "sqlfci-ppg" # Only necessary if you use proximity placement groups
-$arrayEndpoint = "10.1.1.1" # On-premises FlashArray or Pure Cloud Block Store IP address
+$arrayEndpoint = "169.254.0.1" # On-premises FlashArray or Pure Cloud Block Store IP address
 $domainName = "mylab.local" # change the existing AD domain name
-$domainDCIp = "10.1.1.255" # domain controller IP for domain join
+$domainDCIp = "169.254.0.2" # domain controller IP for domain join
 
 ## Verify requirements.
 try {

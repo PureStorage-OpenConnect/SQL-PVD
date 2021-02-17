@@ -19,9 +19,9 @@ Requirements:
 ### START
 ## Define variables
 $hostName = "HostA"
-$winEndpoint = "10.1.1.2"
-$arrayEndpoint = "10.1.1.1"
-$vcenterEndpoint = "10.1.1.3"
+$winEndpoint = "169.254.0.1"
+$arrayEndpoint = "169.254.0.2"
+$vcenterEndpoint = "169.254.0.3"
 
 ## Verify requirements.
 try {

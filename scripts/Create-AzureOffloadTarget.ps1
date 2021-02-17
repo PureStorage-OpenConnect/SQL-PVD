@@ -25,7 +25,7 @@ $AZStorageAccount = "flasharraystorage" # Must be unique
 $azureContainerName = "offload"
 $resourceGroup = "FlashArrayoffload-rg" # Change to suit
 $location = "westus2" # Change to suit
-$arrayEndpoint = "10.1.1.1"
+$arrayEndpoint = "169.254.0.1"
 
 ## Verify requirements.
 try {

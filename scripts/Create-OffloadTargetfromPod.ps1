@@ -23,7 +23,7 @@ $Credential = (Get-Credential)
 $Pod = "pod1"
 $ArrayClientname = "myClient"
 $Target = "array1"
-$ArrayEndpoint = "10.1.1.1"
+$ArrayEndpoint = "169.254.0.1"
 <# You may uncomment this to use the script command line parameters instead of defining variables.
 Param (
     [Parameter(Mandatory = $true)][PSCredential]$Credential,

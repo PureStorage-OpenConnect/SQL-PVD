@@ -17,8 +17,8 @@ Requirements:
 #
 ### Start
 ## Define Variables.
-$array1 = '10.1.1.1'
-$array2 = '10.1.1.2'
+$array1 = '169.254.0.1'
+$array2 = '169.254.0.2'
 $array1 = New-PfaArray -EndPoint $array1 -Credentials (Get-Credential) -IgnoreCertificateError
 $array2 = New-PfaArray -EndPoint $array2 -Credentials (Get-Credential) -IgnoreCertificateError
 
