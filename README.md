@@ -13,12 +13,8 @@ In this repository, you will find scripts and templates that provide automations
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->
 
-## Folders in this Repository
-The README.md file in each folder contains a description of the files.
-
 [**\Scripts**](https://github.com/PureStorage-OpenConnect/SQL-PVD/tree/main/scripts) - Example scripts
 
-[**\Templates**](https://github.com/PureStorage-OpenConnect/SQL-PVD/tree/main/templates) - Example templates
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->

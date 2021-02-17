@@ -1,6 +1,7 @@
 ### Pure Validated Design
 
-Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www.purestorage.com/)
+**Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www.purestorage.com/)**
+
 # Example Scripts Folder
 #### Deployment Guide:
 * [**Create-ESXiVMsWithRDM.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-ESXiVMsWithRDM.ps1)
@@ -11,6 +12,8 @@ Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www
   * Configure the ESXi hosts in the FlashArray.
 * [**Create-OffloadTargetFromPod.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-OffloadTargetfromPod.ps1)
   * Create Offload Targets from a Pod on a FlashArray.
+* [**Update-OffloadTarget.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Update-OffloadTarget.ps1)
+  * Workaround script to replicate data inside a pod to a snapshot offload target.
 * [**Create-SSMSBackupsAndRestores.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-SSMSBackupsAndRestores.ps1)
   * Create and restore application consistent snapshots using Pure Storage SSMS extsnsion, VSS provider, and SQLbackup SDK.
 * [**Create-PureAzureEnvironment.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-PureAzureEnvironment.ps1)
@@ -21,8 +24,7 @@ Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www
   * Create an Azure Blob Offload Target on a Pure FlashArray. This includes the creation of the Azure Storage Account and configuration of the FlashArray.
 * [**Create-FlashArrayReplication.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Create-FlashArrayReplication.ps1)
   * Create replication between two FlashArrays, either on-premises or Cloud Block Store.
-* [**Update-OffloadTarget.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Update-OffloadTarget.ps1)
-  * Workaround script to replicate data inside a pod to a snapshot offload target.
+
 
 ## Pure Cloud Block Store deployment files
 - [**cbs_parameterfile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_parameterfile.json) and [**cbs_templatefile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_templatefile.json)
