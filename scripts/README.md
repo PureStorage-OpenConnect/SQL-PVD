@@ -27,7 +27,7 @@
 ## Pure Cloud Block Store deployment files
 - [**cbs_parameterfile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_parameterfile.json) and [**cbs_templatefile.json**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/cbs_templatefile.json)
   - These files are used together as an ARM Template deployment of the Pure Cloud Block Store on Azure. The _cbs_parameterfile.json_ file must be modified to suit your environment.
-- [**New-AzureCloudBlockStoreARM.ps1**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/New-AzureCloudBlockStore.ps1)
+- [**New-AzureCloudBlockStoreARM.ps1**](https://github.com/PureStorage-OpenConnect/SQL-PVD/blob/main/scripts/New-AzureCloudBlockStoreARM.ps1)
   - Contains the PowerShell and Azure CLI commands to deploy the provided templates.
 
 <!-- wp:separator -->
