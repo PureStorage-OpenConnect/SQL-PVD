@@ -1,6 +1,8 @@
 <#
-Deploy-PureCloudBlockStore.ps1
+New-AzureCloudBlockStore.ps1
 
+: Revision 1.0.0.1 (mnelson)
+:: Added CLI deployment watch command as optional
 : Revision 1.0.0.0
 :: initial release
 
@@ -72,8 +74,11 @@ New-AzResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resource
 
 <# The Pure Cloud Block Store can also be deplyed using the Azure CLI via a local session or a Cloud Shell session (preferred)
 Use these lines to perform the deployment. refer to this article for more complete instructions - https://support.purestorage.com/FlashArray/PurityFA/Cloud_Block_Store/Cloud_Block_Store_Deployment_and_Configuration_Guide_for_Azure_using_Azure_CLI
+Optional - As the deployment proceeds with minimal status information showing in the CLI, you may wish to turn on the verbose output of the deployment progress. To do this, install this Azure CLI extension - https://github.com/mikenelson-io/az-cli-extension-show-deployment and run this command in a new CLI session: az group deployment watch --resource-group $resourceGroup --name $deploymentName
+
 az account set --subscription $azSubscription
-az deployment group create --resource-group $resourceGroup --template-file cbs_templatefile.json --parameters cbs_parameterfile.json
+az deployment group create --name $deploymentName --resource-group $resourceGroup --template-file cbs_templatefile.json --parameters cbs_parameterfile.json
+
 #>
 
 ### END

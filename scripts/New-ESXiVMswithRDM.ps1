@@ -1,5 +1,5 @@
 <#
-Create-ESXiVMsWithRDM.ps1
+New-ESXiVMswithRDM.ps1
 
 : Revision 1.0.0.0
 :: initial release
@@ -19,10 +19,10 @@ Requirements:
 
 #### Start
 ## Define variables
-$VCenterServerIP = "169.254.0.1"
-# Without vCenter certificate setup, you have to ignore cert errors. If certificates are configured, comment out the line.
+$VCenterServerIP = "IP Address x.x.x.x"
+# Without vCenter certificate setup, you have to ignore certificate errors. If certificates are configured, comment out the line.
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
-# Connect to vCenter creds popup or automate pulling encrypted creds with other switches.
+# Connect to vCenter credentials popup or automate pulling encrypted credentials with other switches.
 $vcenter = Connect-VIServer -Server $VCenterServerIP
 # Rather than specify all the configuration options, create a VM, sysprep it, and make it into a template.
 # Start by assigning a template to a variable.
@@ -30,7 +30,7 @@ $VMTemplate = Get-Template -Name "W2019Template"
 # Specify which datastore to place the VM boot VMDK into.
 $myDatastore = Get-Datastore -Name "VM"
 # Specify a specific ESXi host to place a new VM, or you could specify a cluster with DRS.
-$vmhost = Get-VMHost -Name "169.254.0.2"
+$vmhost = Get-VMHost -Name "IP Address x.x.x.x"
 $VMName1 = "testvm1"
 $VMName2 = "testvm2"
 ## End Define variables

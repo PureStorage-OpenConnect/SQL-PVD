@@ -1,20 +1,20 @@
 <#
-Create-OffloadTargetFromPod.ps1
+New-OffloadTargetfromPod.ps1
 
 : Revision 1.0.0.0
 :: initial release
 
-Example script to create an offload target from a Protection Group Pod snapshot.
+Example script to create or update an offload target from a Protection Group Pod snapshot.
 This is not intended to be a complete run script. It is for example purposes only.
 Variables should be modified to suit the environment.
 
-This script is AS-IS. No warranties expressed or implied by Pure Storage or the creator.
+This script is provided AS-IS. No warranties expressed or implied by Pure Storage or the creator.
 
 Requirements:
   PowerShell version 5.1
   Pure Storage PowerShell SDK v1 module
   Pure Storage PowerShell SDK v2 module
-  Flasharray array admin login credentials
+  FlashArray array admin login credentials
 #>
 #
 ### Start
@@ -23,7 +23,7 @@ $Credential = (Get-Credential)
 $Pod = "pod1"
 $ArrayClientname = "myClient"
 $Target = "array1"
-$ArrayEndpoint = "169.254.0.1"
+$ArrayEndpoint = "IP address x.x.x.x"
 <# You may uncomment this to use the script command line parameters instead of defining variables.
 Param (
     [Parameter(Mandatory = $true)][PSCredential]$Credential,
@@ -120,9 +120,8 @@ function cleanup-tempPod {
     Write-Debug "Cleanup of Existing Cloned Pod Complete"
     return
 }
-#######################################################################################
-# Get Connected
-#######################################################################################
+
+## Get Connected
 Write-Debug "Connecting with SDK1"
 try{
     $faSDK1 = New-PfaArray -Credentials $Credential -Endpoint $ArrayEndpoint -IgnoreCertificateError
@@ -145,9 +144,7 @@ catch {
     break
 }
 ​
-#######################################################################################
-# Make Sure Pod Exists
-#######################################################################################
+## Make Sure Pod Exists
 $debugstring = "Checking for existence of pod: " + $pod
 Write-Debug $debugstring
 ​
@@ -162,9 +159,7 @@ else{
     break
 }
 ​
-#######################################################################################
-# Get Offload Target
-#######################################################################################
+## Get Offload Target
 Write-Debug "Getting Offload Target"
 $offloads = Get-Pfa2Offload | Where-Object name -eq $target
 $debugstring = "There are " + $offloads.count + " offloads found matching " + $target + "."
@@ -181,17 +176,13 @@ foreach ($offload in $offloads){
     }
 }
 ​
-#######################################################################################
-# Check for Existence of PGroup
-#######################################################################################
+## Check for Existence of PGroup
 $pgroupname = $pod + $suffix
 $debugstring = "Checking for the existence of protection group: " + $pgroupname
 write-debug $debugstring
 $pgroup = Get-Pfa2ProtectionGroup -name $pgroupname -ErrorAction SilentlyContinue
 ​
-#######################################################################################
-# If PGroup Exists, Make Sure Target is Configured
-#######################################################################################
+## If PGroup Exists, Make Sure Target is Configured
 if ($pgroup.count -eq 1){
     $debugstring = $pgroupname + " exists."
     write-debug $debugstring
@@ -207,9 +198,8 @@ if ($pgroup.count -eq 1){
         $newpgroupTarget = New-Pfa2ProtectionGroupTarget -GroupNames $pgroupname -MemberNames $target
     }
 }
-#######################################################################################
-# If PGroup Does Not Exist, Create It and Add the Target
-#######################################################################################
+
+## If PGroup Does Not Exist, Create It and Add the Target
 else{
     $debugstring = "Protection group " + $pgroupname + " does not exist. Creating it."
     Write-Debug $debugstring
@@ -219,30 +209,22 @@ else{
     $newpgroupTarget = New-Pfa2ProtectionGroupTarget -GroupNames $pgroupname -MemberNames $target
 }
 ​
-#######################################################################################
-# Check If Transfer Is Already In Progress and Abort if So
-#######################################################################################
+## Check If Transfer Is Already In Progress and Abort if So
 ​
-#TODO: Figure out how to do this
+# TODO: Figure out how to do this
 ​
-#######################################################################################
-# Cloned Pod Cleanup in Preparation for new Cloned Pod (In case it exists already)
-#######################################################################################
+## Cloned Pod Cleanup in Preparation for new Cloned Pod (In case it exists already)
 $clonedPodName = $pod + $suffix
 write-debug "Calling Cleanup Function"
 cleanup-tempPod -clonedPodName $clonedPodName
 ​
-#######################################################################################
-# Create a Temporary Pod Clone
-#######################################################################################
+## Create a Temporary Pod Clone
 $podref = New-Pfa2ReferenceObject -name $pod
 $debugstring = "Cloning pod " + $pod + " as " + $clonedPodName
 Write-Debug $debugstring
 $clonedPod = New-Pfa2Pod -name $clonedPodName -Source $podref
 ​
-#######################################################################################
-# Copy Volumes from the Cloned Pod to the External PGroup
-#######################################################################################
+## Copy Volumes from the Cloned Pod to the External PGroup
 $debugstring = "Copying Volumes from cloned pod " + $clonedPodName + " to PGroup " + $pgroupname
 Write-Debug $debugstring
 $fullVolList = Get-Pfa2Volume
@@ -271,17 +253,12 @@ foreach ($vol in $vols){
     Get-Pfa2VolumeSnapshot | Where-Object {$_.TimeRemaining -gt 0 -and $_.Source.Name -eq $newVolName} | Remove-Pfa2VolumeSnapshot -Eradicate -Confirm:$false
 }
 ​
-#######################################################################################
-# Cloned Pod Cleanup (Again)
-#######################################################################################
+## Cloned Pod Cleanup (Again)
 $clonedPodName = $pod + $suffix
 write-debug "Calling Cleanup Function"
 cleanup-tempPod -clonedPodName $clonedPodName
 ​
-#######################################################################################
-# Create a PGroup Snapshot and Replicate it Now
-#######################################################################################
-​
+## Create a PGroup Snapshot and Replicate it Now
 $newsnap = New-PfaProtectionGroupSnapshot -array $faSDK1 -Protectiongroupname $pgroupname -ReplicateNow -ApplyRetention
 return $newsnap
 

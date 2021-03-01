@@ -1,10 +1,10 @@
 <#
-Create-SSMSBackupsAndRestores.ps1
+New-SSMSBackupsAndRestores.ps1
 
 : Revision 1.0.0.0
 :: initial release
 
-Example script to create and restore application consistent database backups using the Pure storage SSMS extension and VSS provider.
+Example script to create and restore application consistent database backups using the Pure Storage SSMS extension and VSS Provider.
 This is not intended to be a complete run script. It is for example purposes only.
 Variables should be modified to suit the environment.
 
@@ -19,9 +19,9 @@ Requirements:
 ### START
 ## Define variables
 $hostName = "HostA"
-$winEndpoint = "169.254.0.1"
-$arrayEndpoint = "169.254.0.2"
-$vcenterEndpoint = "169.254.0.3"
+$winEndpoint = "IP Address x.x.x.x"
+$arrayEndpoint = "IP Address x.x.x.x"
+$vcenterEndpoint = "IP Address x.x.x.x"
 
 ## Verify requirements.
 try {
@@ -63,7 +63,7 @@ Dismount-PfaDrive -HistoryId 29
 ## Restore a backup.
 Restore-PfaBackupJob -HistoryId 31
 
-## Optional, but when only in PowerShell, you may have to enumerate things to properly specify the saved credentials to create a configuration.
+## Optional, but when in PowerShell, you may have to enumerate things to properly specify the saved credentials to create a configuration.
 # List the already existing, saved credentials.
 Get-PfaBackupCredList -CredentialType Windows
 Get-PfaBackupCredList -CredentialType vCenter

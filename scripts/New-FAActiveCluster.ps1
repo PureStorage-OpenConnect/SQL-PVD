@@ -1,5 +1,5 @@
 <#
-Create-FAActiveCluster.ps1
+New-FAActiveCluster.ps1
 
 : Revision 1.0.0.0
 :: initial release
@@ -14,11 +14,11 @@ Requirements:
   Pure Storage PowerShell SDK v1 module
   Flasharray array admin login credentials
 #>
-#
+
 ### Start
 ## Define variables
-$array1Endpoint = '169.254.0.1'
-$array2Endpoint = '169.254.0.2'
+$array1Endpoint = 'IP Address x.x.x.x'
+$array2Endpoint = 'IP Address x.x.x.x'
 $podName = "pod1"
 $host1name = "HostA"
 $host2Name = "HostB"
@@ -61,7 +61,7 @@ New-PfaHost -Array $array1 -PreferredArrays $array2 -Name $host2Name
 New-PfaHost -Array $array2 -PreferredArrays $array1 -Name $host1name
 New-PfaHost -Array $array2 -PreferredArrays $array2 -Name $host2name
 
-## For ESXi set the personality on the Hosts.
+## For ESXi, set the personality on the Hosts.
 Set-PfaPersonality -Array $array1 -Name $host1name -Personality esxi
 Set-PfaPersonality -Array $array1 -Name $host2name -Personality esxi
 Set-PfaPersonality -Array $array2 -Name $host1name -Personality esxi

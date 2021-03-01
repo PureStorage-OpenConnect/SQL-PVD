@@ -1,5 +1,5 @@
 <#
-Create-AzureOffloadTarget.ps1
+New-AzureOffloadTarget.ps1
 
 : Revision 1.1.0.0
 :: Restructured for SDK [mnelson]
@@ -25,7 +25,7 @@ $AZStorageAccount = "flasharraystorage" # Must be unique
 $azureContainerName = "offload"
 $resourceGroup = "FlashArrayoffload-rg" # Change to suit
 $location = "westus2" # Change to suit
-$arrayEndpoint = "169.254.0.1"
+$arrayEndpoint = "IP Address x.x.x.x"
 
 ## Verify requirements.
 try {

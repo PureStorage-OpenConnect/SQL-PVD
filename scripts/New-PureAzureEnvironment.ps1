@@ -1,5 +1,5 @@
 <#
-Create-PureAzureEnvironment.ps1
+New-PureAzureEnvironment.ps1
 
 : Revision 1.0.0.0
 :: initial release
@@ -25,10 +25,13 @@ $location = 'westus2'
 $vmNode1Name = "node1"
 $vmNode2Name = "node2"
 $sharedDiskName = "shareddisk1"
-$ppgName = "sqlfci-ppg" # Only necessary if you use proximity placement groups
-$arrayEndpoint = "169.254.0.1" # On-premises FlashArray or Pure Cloud Block Store IP address
+$ppgName = "sqlfci-ppg" # only necessary if you use proximity placement groups
+$arrayEndpoint = "IP Address x.x.x.x" # On-premises FlashArray or Pure Cloud Block Store IP address
 $domainName = "mylab.local" # change the existing AD domain name
-$domainDCIp = "169.254.0.2" # domain controller IP for domain join
+$domainDCIp = "IP Address x.x.x.x" # domain controller IP for domain join
+$vnetAddressRange = "IP range in CDR format x.x.x.x/xx" # only required if creating a new subnet
+$subnetAddressRange = "IP range in CDR format x.x.x.x/xx" # only required if creating a new vNet
+$publicDNS = "IP address of public DNS server x.x.x.x"
 
 ## Verify requirements.
 try {
@@ -66,10 +69,10 @@ try {
 #
 ### Begin Azure Work
 <#
-###################################################################################################
+
 ### Active Directory Domain
  It is assumed that you have an operational Active Directory controller available on-premises. Extending that AD to Azure either by adding a Virtual Machine as a Domain Controller in Azure, or by extending AD with Azure Active Directory Services (AADS) is optimal and will ensire seamless domain and DNS operations. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/learn/modules/deploy-manage-azure-iaas-active-directory-domain-controllers-azure/
-###################################################################################################
+
 #>
 
 # Connect to Azure
@@ -85,13 +88,12 @@ Connect-AzAccount
 # Get-AzComputeResourceSku | where {$_.Locations.Contains("eastus")};
 New-AzResourceGroup -Name $resourceGroup -Location westus2
 
-# Create a subnet configuration.
-$subnetConfig = New-AzVirtualNetworkSubnetConfig -Name fciSubnet -AddressPrefix 172.1.1.0/24
-
 ## Create a virtual network.
 # You may choose to an existing vNet.
 # Be sure to alter the parameters as necessary.
-$vnet = New-AzVirtualNetwork -ResourceGroupName $resourceGroup -Location $location -Name fciVNet -AddressPrefix 172.1.0.0/16 -Subnet $subnetConfig
+# Create a subnet configuration.
+$subnetConfig = New-AzVirtualNetworkSubnetConfig -Name fciSubnet -AddressPrefix $subnetAddressRange
+$vnet = New-AzVirtualNetwork -ResourceGroupName $resourceGroup -Location $location -Name fciVNet -AddressPrefix $vnetAddressRange -Subnet $subnetConfig
 
 ## Create a public IP address in an availability zone and specify a DNS name.
 $pip = New-AzPublicIpAddress -ResourceGroupName $resourceGroup -Location $location -Zone 1 -AllocationMethod Static -IdleTimeoutInMinutes 4 -Name "fcipublicdns$(Get-Random)" -Sku Standard
@@ -119,9 +121,9 @@ New-AzVM -ResourceGroupName $resourceGroup -Location westus2 -VM $vmConfig2 -Ena
 ## Add VMs to domain.
 # Azure defaults to a single NIC, so one index DNS change.
 $netIndex = Get-NetAdapter -CimSession $vmNode1name | Select-Object InterfaceIndex
-Set-DnsClientServerAddress -CimSession $vmNode1name -InterfaceIndex $netIndex -ServerAddresses ($domainDCIp,"1.1.1.1")
+Set-DnsClientServerAddress -CimSession $vmNode1name -InterfaceIndex $netIndex -ServerAddresses ($domainDCIp,$publicDNS)
 $netIndex = Get-NetAdapter -CimSession $vmNode2name | Select-Object InterfaceIndex
-Set-DnsClientServerAddress -CimSession $vmNode2name -InterfaceIndex $netIndex -ServerAddresses ($domainDCIp, "1.1.1.1")
+Set-DnsClientServerAddress -CimSession $vmNode2name -InterfaceIndex $netIndex -ServerAddresses ($domainDCIp, $publicDNS)
 Add-Computer -ComputerName vmNode1name, vmNode2name -DomainName $domainName –Credential $cred -Restart –Force
 ### End Azure Work
 
@@ -187,14 +189,14 @@ Restart-Computer -ComputerName $server -Credential $cred
 ### End iSCSI and Array work
 
 <#
-###################################################################################################
+
 ### Create Clusters
  It is assumed that you will create a WSFC cluster using the Server 2019 operating system. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/windows-server/failover-clustering/create-failover-cluster
  It is assumed that you will create a SQL Server FCI on the preceding WSFC. Complete documentation and detailed instructions can be found at this Microsoft site - https://docs.microsoft.com/en-us/sql/sql-server/failover-clusters/install/create-a-new-sql-server-failover-cluster-setup?view=sql-server-ver15
-###################################################################################################
+
 #>
 
-# You may also create a cluster witness for quorom. This can be a volume on the FlashArray or as an azure Shared Disk (Premium or UltraSSD).
+# You may also create a cluster witness for quorom. This can be a volume on the FlashArray or as an Azure Shared Disk (Premium or UltraSSD).
 # This is the code for Azure Managed Shared Disk. This can be a temporary disk for the cluster quorum until the FlashArray Volumes are connected.
 # The "NewWSFCSharedDisk.json" file must exist in the same folder for this function to work.
 function New-Shared-Disk () {

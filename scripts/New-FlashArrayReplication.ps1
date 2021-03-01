@@ -1,5 +1,5 @@
 <#
-Create-FlashArrayReplication.ps1
+New-FlashArrayReplication.ps1
 
 : Revision 1.0.0.0
 :: initial release
@@ -14,11 +14,11 @@ Requirements:
   Pure Storage PowerShell SDK v1 module
   Flasharray array admin login credentials
 #>
-#
+
 ### Start
 ## Define Variables.
-$array1 = '169.254.0.1'
-$array2 = '169.254.0.2'
+$array1 = 'IP Address x.x.x.x'
+$array2 = 'IP Address x.x.x.x'
 $array1 = New-PfaArray -EndPoint $array1 -Credentials (Get-Credential) -IgnoreCertificateError
 $array2 = New-PfaArray -EndPoint $array2 -Credentials (Get-Credential) -IgnoreCertificateError
 
@@ -26,6 +26,7 @@ $array2 = New-PfaArray -EndPoint $array2 -Credentials (Get-Credential) -IgnoreCe
 $KeyString = Get-PfaConnectionKey -Array $Array2
 
 ## Retrieve replibond IP address.
+# If you are using Purity File Services, or have removed the replbond, this command may not retrieve the correct information. You would then need to filter based off the name of the interfaces or manually enter the replication addresses.
 $replAddress = (Get-PfaNetworkInterfaces -Array $array1 | Where-Object Name -eq "replbond").address
 
 ## Create array replication.

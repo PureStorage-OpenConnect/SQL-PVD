@@ -1,5 +1,5 @@
 <#
-Configure-FAWithESXi.ps1
+Update-FAwithESXi.ps1
 
 : Revision 1.0.0.0
 :: initial release
@@ -13,7 +13,7 @@ This script is AS-IS. No warranties expressed or implied by Pure Storage or the 
 Requirements:
   Pure Storage PowerShell SDK v1 module
   VMware vSphere PowerCLI (Only required to obtain WWNs from HBAs on ESXi hosts. You can also enter these manually.)
-  Flasharray array admin login credentials
+  FlashArray admin login credentials
 #>
 #
 ### Start
@@ -22,8 +22,8 @@ $vcenter = "vcenter1"
 $ESXiCluster = "Cluster1"
 $esxiHost1Name = "esxi1"
 $esxiHost2Name = "esxi2"
-$array1Endpoint = "169.254.0.1"
-$array2Endpoint = "169.254.0.2"
+$array1Endpoint = "IP Address x.x.x.x"
+$array2Endpoint = "IP Address x.x.x.x"
 $podName = "pod1"
 $hostgroupName = "ESXiHosts"
 $volumeName = "vol1"
