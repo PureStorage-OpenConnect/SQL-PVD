@@ -6,7 +6,7 @@
 #### Deployment Guide:
 * [**New-ESXiVMswithRDM.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/New-ESXiVMsWithRDM.ps1)
   * Create a Windows Server Failover Cluster VMs with RDM disk on vSphere ESXi.
-* [**New-FAActiveCluster**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/New-FAActiveCluster.ps1)
+* [**New-FAActiveCluster.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/New-FAActiveCluster.ps1)
   * Create an ActiveCluster between two FlashArrays.
 * [**Update-FAwithESXi.ps1**](https://github.com/PureStorage-Connect/SQL-PVD/blob/main/scripts/Update-FAwithESXi.ps1)
   * Update the configuration of the ESXi hosts in the FlashArray.
