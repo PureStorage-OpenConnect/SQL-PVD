@@ -8,7 +8,7 @@ In this repository, you will find scripts and templates that provide sample auto
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->
 
-* **Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www.purestorage.com/)**
+* **Link to the PVD - [Increase SQL Server Resilience with Hybrid Cloud](https://www.purestorage.com/)**
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
