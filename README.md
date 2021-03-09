@@ -1,5 +1,6 @@
 ## Pure Validated Design
-# SQL Server Business Resilience with Hybrid Cloud
+# Increase SQL Server Resilience with Hybrid Cloud
+Featuring Pure FlashArray&trade; with ActiveCluster&trade; and Pure Cloud Block Store&trade; on Azure
 
 ### PVD File Repository
 In this repository, you will find scripts and templates that provide sample automation for the procedures that are described in detail in the Pure Validated Design (PVD) document.
