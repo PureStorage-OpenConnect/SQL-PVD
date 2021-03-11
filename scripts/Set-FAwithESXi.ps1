@@ -1,5 +1,5 @@
 <#
-Update-FAwithESXi.ps1
+Set-FAwithESXi.ps1
 
 : Revision 1.0.0.0
 :: initial release
