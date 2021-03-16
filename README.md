@@ -1,4 +1,6 @@
-### Pure Validated Design &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="pvd_logo.png">
+<p align="center"> ![PVD Logo](pvd_logo.png) </p>
+
+### Pure Validated Design
 # Increase SQL Server Resilience with Hybrid Cloud
 Featuring Pure FlashArray&trade; with ActiveCluster&trade; and Pure Cloud Block Store&trade; for Azure
 
