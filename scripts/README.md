@@ -1,6 +1,6 @@
 ### Pure Validated Design
 
-**Link to the PVD - [SQL Server Business Resilience with Hybrid Cloud](https://www.purestorage.com/)**
+**Link to the PVD - [Increase SQL Server Resilience with Hybrid Cloud](https://www.purestorage.com/docs.html?item=/type/pdf/subtype/doc/path/content/dam/pdf/en/validated-design-guides/vd-increase-sql-server-resilience.pdf)**
 
 # Script Examples Folder
 #### Deployment Guide:
