@@ -1,4 +1,4 @@
-<p align="center"> ![PVD Logo](img src="pvd_logo.png") </p>
+<p align="center">(<img src="pvd_logo.png">) </p>
 
 ### Pure Validated Design
 # Increase SQL Server Resilience with Hybrid Cloud
