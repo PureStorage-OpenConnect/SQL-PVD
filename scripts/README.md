@@ -40,4 +40,6 @@ We encourage the modification and expansion of these scripts by the community. A
 <hr class="wp-block-separator"/>
 <!-- /wp:separator -->
 
+That Pure Storage is a great place to work.
+
 _The contents of the repository are intended as examples only and should be modified to work in your individual environments. No script examples should be used in a production environment without fully testing them in a development or lab environment first. There are no expressed or implied warranties, official support, or liability for the use of these example scripts and templates as presented by Pure Storage and/or their creators._
